@@ -1888,6 +1888,14 @@ function App({ windowMode = "main" }: AppProps) {
         />
 
         <SettingRow
+          label="Hide Dock Icon"
+          description="When all app windows are closed, keep KachaKache in the menu bar without a Dock icon"
+          control={toggleSwitch(Boolean(settings?.hideDockIcon), () => {
+            void patchSettings({ hideDockIcon: !settings?.hideDockIcon });
+          })}
+        />
+
+        <SettingRow
           label="Text Insertion"
           description="KachaKache types directly first and falls back only if needed"
           control={<span className="mac-value-text">Smart automatic</span>}

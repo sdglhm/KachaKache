@@ -93,6 +93,7 @@ pub struct Settings {
     pub transcript_retention: TranscriptRetention,
     pub silence_timeout_ms: u64,
     pub overlay_enabled: bool,
+    pub hide_dock_icon: bool,
     pub launch_at_login_placeholder: bool,
     pub onboarding_completed: bool,
     #[serde(default)]
@@ -110,6 +111,7 @@ impl Default for Settings {
             transcript_retention: TranscriptRetention::Indefinite,
             silence_timeout_ms: 1200,
             overlay_enabled: true,
+            hide_dock_icon: true,
             launch_at_login_placeholder: false,
             onboarding_completed: false,
             rules: RulesConfig::default(),
@@ -156,6 +158,7 @@ pub struct SettingsPatch {
     pub transcript_retention: Option<TranscriptRetention>,
     pub silence_timeout_ms: Option<u64>,
     pub overlay_enabled: Option<bool>,
+    pub hide_dock_icon: Option<bool>,
     pub launch_at_login_placeholder: Option<bool>,
     pub onboarding_completed: Option<bool>,
     pub rules: Option<RulesPatch>,

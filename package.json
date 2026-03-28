@@ -1,7 +1,7 @@
 {
   "name": "kachakache",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "scripts": {
     "sync:whisper-runtime": "bash scripts/sync_whisper_runtime.sh",

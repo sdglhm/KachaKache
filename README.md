@@ -261,6 +261,16 @@ Build outputs:
 - app bundle: `src-tauri/target/release/bundle/macos/KachaKache.app`
 - DMG: `src-tauri/target/release/bundle/dmg/`
 
+### Unsigned Build Note
+
+Current builds are unsigned unless a signing/notarization pipeline is configured.
+
+If macOS blocks the app after download, move it to `/Applications` and run:
+
+```bash
+xattr -dr com.apple.quarantine /Applications/KachaKache.app
+```
+
 ## Building on GitHub
 
 The repository includes a GitHub Actions workflow:

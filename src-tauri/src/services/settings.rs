@@ -75,6 +75,9 @@ impl SettingsStore {
         if let Some(value) = patch.overlay_enabled {
             next.overlay_enabled = value;
         }
+        if let Some(value) = patch.hide_dock_icon {
+            next.hide_dock_icon = value;
+        }
         if let Some(value) = patch.launch_at_login_placeholder {
             next.launch_at_login_placeholder = value;
         }
@@ -101,6 +104,14 @@ fn migrate_settings(mut settings: Settings, raw_json: Option<&Value>) -> Setting
         .unwrap_or(true);
     if !onboarding_present {
         settings.onboarding_completed = true;
+    }
+
+    let hide_dock_icon_present = raw_json
+        .and_then(|value| value.as_object())
+        .map(|map| map.contains_key("hideDockIcon"))
+        .unwrap_or(true);
+    if !hide_dock_icon_present {
+        settings.hide_dock_icon = Settings::default().hide_dock_icon;
     }
 
     settings
@@ -148,12 +159,14 @@ mod tests {
         let patch = SettingsPatch {
             silence_timeout_ms: Some(42),
             overlay_enabled: Some(false),
+            hide_dock_icon: Some(true),
             ..Default::default()
         };
 
         let updated = store.apply_patch(&current, patch).unwrap();
         assert_eq!(updated.silence_timeout_ms, 300);
         assert!(!updated.overlay_enabled);
+        assert!(updated.hide_dock_icon);
 
         let _ = std::fs::remove_file(temp);
     }
@@ -255,6 +268,44 @@ mod tests {
 
         let loaded = store.load().unwrap();
         assert!(loaded.onboarding_completed);
+
+        let _ = std::fs::remove_file(temp);
+    }
+
+    #[test]
+    fn load_defaults_hide_dock_icon_when_field_is_missing() {
+        let temp =
+            std::env::temp_dir().join(format!("kachakache-settings-{}.json", uuid::Uuid::new_v4()));
+        let store = SettingsStore::new(temp.clone());
+        std::fs::write(
+            &temp,
+            r#"{
+  "shortcut": "Cmd+L",
+  "triggerMode": "toggle",
+  "micDeviceId": null,
+  "activeModelId": "base.en",
+  "insertionMode": "autoPaste",
+  "transcriptRetention": "indefinite",
+  "silenceTimeoutMs": 1200,
+  "overlayEnabled": true,
+  "launchAtLoginPlaceholder": false,
+  "onboardingCompleted": true,
+  "rules": {
+    "removeFillerWords": true,
+    "capitalizeSentenceStarts": true,
+    "convertPausesToPunctuation": true,
+    "normalizeSpaces": true,
+    "smartNewlineHandling": true,
+    "detectSpokenPunctuation": true,
+    "spokenFormattingRules": true,
+    "selfCorrectionRules": true
+  }
+}"#,
+        )
+        .unwrap();
+
+        let loaded = store.load().unwrap();
+        assert!(loaded.hide_dock_icon);
 
         let _ = std::fs::remove_file(temp);
     }

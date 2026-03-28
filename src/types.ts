@@ -46,6 +46,7 @@ export interface Settings {
   transcriptRetention: TranscriptRetention;
   silenceTimeoutMs: number;
   overlayEnabled: boolean;
+  hideDockIcon: boolean;
   launchAtLoginPlaceholder: boolean;
   onboardingCompleted: boolean;
   rules: RulesConfig;
@@ -60,6 +61,7 @@ export interface SettingsPatch {
   transcriptRetention?: TranscriptRetention;
   silenceTimeoutMs?: number;
   overlayEnabled?: boolean;
+  hideDockIcon?: boolean;
   launchAtLoginPlaceholder?: boolean;
   onboardingCompleted?: boolean;
   rules?: RulesPatch;

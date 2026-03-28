@@ -1,6 +1,6 @@
 [package]
 name = "kachakache"
-version = "0.1.0"
+version = "0.1.1"
 description = "KachaKache local dictation app"
 authors = ["KachaKache"]
 edition = "2021"
@@ -31,4 +31,5 @@ uuid = { version = "1", features = ["v4", "serde"] }
 core-graphics = "0.24"
 macos-accessibility-client = "0.0.2"
 objc2 = "0.6.1"
+objc2-app-kit = { version = "0.3.2", features = ["NSApplication", "NSRunningApplication"] }
 objc2-foundation = "0.3.1"

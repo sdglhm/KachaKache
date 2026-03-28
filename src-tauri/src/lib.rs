@@ -4,6 +4,10 @@ mod services;
 mod types;
 
 use app_state::AppState;
+#[cfg(target_os = "macos")]
+use objc2::MainThreadMarker;
+#[cfg(target_os = "macos")]
+use objc2_app_kit::{NSApplication, NSApplicationActivationPolicy};
 use tauri::menu::{
     Menu, MenuItem, PredefinedMenuItem, Submenu,
 };
@@ -221,6 +225,9 @@ fn show_about_window(app: &tauri::AppHandle) -> tauri::Result<()> {
         let _ = window.show();
         let _ = window.unminimize();
         let _ = window.set_focus();
+        let hide_dock_icon = tauri::async_runtime::block_on(app.state::<AppState>().current_settings())
+            .hide_dock_icon;
+        let _ = sync_dock_icon_visibility(app, hide_dock_icon);
         return Ok(());
     }
 
@@ -238,6 +245,9 @@ fn show_about_window(app: &tauri::AppHandle) -> tauri::Result<()> {
         .build()?;
 
     let _ = window.set_focus();
+    let hide_dock_icon = tauri::async_runtime::block_on(app.state::<AppState>().current_settings())
+        .hide_dock_icon;
+    let _ = sync_dock_icon_visibility(app, hide_dock_icon);
     Ok(())
 }
 
@@ -246,6 +256,9 @@ pub fn show_setup_window(app: &tauri::AppHandle) -> tauri::Result<()> {
         let _ = window.show();
         let _ = window.unminimize();
         let _ = window.set_focus();
+        let hide_dock_icon = tauri::async_runtime::block_on(app.state::<AppState>().current_settings())
+            .hide_dock_icon;
+        let _ = sync_dock_icon_visibility(app, hide_dock_icon);
         return Ok(());
     }
 
@@ -263,6 +276,9 @@ pub fn show_setup_window(app: &tauri::AppHandle) -> tauri::Result<()> {
         .build()?;
 
     let _ = window.set_focus();
+    let hide_dock_icon = tauri::async_runtime::block_on(app.state::<AppState>().current_settings())
+        .hide_dock_icon;
+    let _ = sync_dock_icon_visibility(app, hide_dock_icon);
     Ok(())
 }
 
@@ -278,6 +294,39 @@ pub fn close_setup_window(app: &tauri::AppHandle, focus_main: bool) {
             let _ = main.set_focus();
         }
     }
+
+    let hide_dock_icon = tauri::async_runtime::block_on(app.state::<AppState>().current_settings())
+        .hide_dock_icon;
+    let _ = sync_dock_icon_visibility(app, hide_dock_icon);
+}
+
+#[cfg(target_os = "macos")]
+fn any_primary_window_visible(app: &AppHandle) -> bool {
+    ["main", "setup", "about"]
+        .iter()
+        .filter_map(|label| app.get_webview_window(label))
+        .any(|window| window.is_visible().unwrap_or(false))
+}
+
+pub fn sync_dock_icon_visibility(app: &AppHandle, hide_dock_icon: bool) -> tauri::Result<()> {
+    #[cfg(target_os = "macos")]
+    {
+        let should_hide = hide_dock_icon && !any_primary_window_visible(app);
+        app.run_on_main_thread(move || {
+            let Some(mtm) = MainThreadMarker::new() else {
+                return;
+            };
+            let app = NSApplication::sharedApplication(mtm);
+            let policy = if should_hide {
+                NSApplicationActivationPolicy::Accessory
+            } else {
+                NSApplicationActivationPolicy::Regular
+            };
+            let _ = app.setActivationPolicy(policy);
+        })?;
+    }
+
+    Ok(())
 }
 
 fn position_overlay_bottom_right(overlay: &WebviewWindow) {
@@ -311,6 +360,10 @@ fn register_menu_handler(app: &tauri::App, toggle_items: ToggleMenuItems) {
                 let _ = window.show();
                 let _ = window.set_focus();
             }
+            let hide_dock_icon =
+                tauri::async_runtime::block_on(app.state::<AppState>().current_settings())
+                    .hide_dock_icon;
+            let _ = sync_dock_icon_visibility(app, hide_dock_icon);
         }
         MENU_ID_TOGGLE => {
             let state = app.state::<AppState>().inner().clone();
@@ -331,6 +384,10 @@ fn register_menu_handler(app: &tauri::App, toggle_items: ToggleMenuItems) {
                 let _ = window.show();
                 let _ = window.set_focus();
             }
+            let hide_dock_icon =
+                tauri::async_runtime::block_on(app.state::<AppState>().current_settings())
+                    .hide_dock_icon;
+            let _ = sync_dock_icon_visibility(app, hide_dock_icon);
             let state = app.state::<AppState>().inner().clone();
             let app_handle = app.clone();
             tauri::async_runtime::spawn(async move {
@@ -442,12 +499,16 @@ pub fn run() {
             setup_tray_menu_state_listener(&app_handle, toggle_items);
             setup_overlay_visibility_listener(&app_handle);
 
-            let onboarding_completed = tauri::async_runtime::block_on(state.current_settings()).onboarding_completed;
+            let initial_settings = tauri::async_runtime::block_on(state.current_settings());
+            let onboarding_completed = initial_settings.onboarding_completed;
+            let hide_dock_icon = initial_settings.hide_dock_icon;
+            let _ = sync_dock_icon_visibility(&app_handle, hide_dock_icon);
             if !onboarding_completed {
                 if let Some(main) = app.get_webview_window("main") {
                     let _ = main.hide();
                 }
                 let _ = show_setup_window(&app_handle);
+                let _ = sync_dock_icon_visibility(&app_handle, hide_dock_icon);
             }
 
             Ok(())
@@ -457,6 +518,11 @@ pub fn run() {
                 if let tauri::WindowEvent::CloseRequested { api, .. } = event {
                     api.prevent_close();
                     let _ = window.hide();
+                    let hide_dock_icon = tauri::async_runtime::block_on(
+                        window.app_handle().state::<AppState>().current_settings(),
+                    )
+                    .hide_dock_icon;
+                    let _ = sync_dock_icon_visibility(&window.app_handle(), hide_dock_icon);
                 }
             } else if window.label() == "setup" {
                 if let tauri::WindowEvent::CloseRequested { .. } = event {
@@ -464,6 +530,19 @@ pub fn run() {
                         let _ = main.show();
                         let _ = main.unminimize();
                     }
+                    let hide_dock_icon = tauri::async_runtime::block_on(
+                        window.app_handle().state::<AppState>().current_settings(),
+                    )
+                    .hide_dock_icon;
+                    let _ = sync_dock_icon_visibility(&window.app_handle(), hide_dock_icon);
+                }
+            } else if window.label() == "about" {
+                if let tauri::WindowEvent::Destroyed = event {
+                    let hide_dock_icon = tauri::async_runtime::block_on(
+                        window.app_handle().state::<AppState>().current_settings(),
+                    )
+                    .hide_dock_icon;
+                    let _ = sync_dock_icon_visibility(&window.app_handle(), hide_dock_icon);
                 }
             }
         })

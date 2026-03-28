@@ -77,6 +77,9 @@ pub async fn update_settings(
         let _ = app.emit("history://updated", history);
     }
 
+    crate::sync_dock_icon_visibility(&app, updated.hide_dock_icon)
+        .map_err(|e| e.to_string())?;
+
     Ok(updated)
 }
 
