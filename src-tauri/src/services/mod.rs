@@ -1,0 +1,10 @@
+pub mod audio;
+pub mod dictation_controller;
+pub mod history;
+pub mod insertion;
+pub mod models;
+pub mod paths;
+pub mod permissions;
+pub mod settings;
+pub mod text_rules;
+pub mod transcription;

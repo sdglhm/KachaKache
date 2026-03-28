@@ -1,0 +1,1132 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light dark;
+  --kk-font: "SF Pro Text", "SF Pro Display", -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+  --kk-window: #f5f5f7;
+  --kk-content: rgba(255, 255, 255, 0.84);
+  --kk-sidebar: rgba(242, 242, 247, 0.88);
+  --kk-group: rgba(255, 255, 255, 0.76);
+  --kk-group-strong: rgba(255, 255, 255, 0.94);
+  --kk-separator: rgba(60, 60, 67, 0.18);
+  --kk-separator-soft: rgba(60, 60, 67, 0.1);
+  --kk-text: #1d1d1f;
+  --kk-text-secondary: #4e5259;
+  --kk-text-tertiary: #7b808a;
+  --kk-accent: #0a84ff;
+  --kk-accent-soft: rgba(10, 132, 255, 0.12);
+  --kk-selection: rgba(10, 132, 255, 0.12);
+  --kk-hover: rgba(17, 17, 17, 0.035);
+  --kk-danger: #c83c35;
+  --kk-success: #2f9e59;
+  --kk-processing: #6a63ff;
+  --kk-shadow: 0 0.5px 0 rgba(255, 255, 255, 0.72), 0 10px 28px rgba(16, 24, 40, 0.08);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --kk-window: #1e1f23;
+    --kk-content: rgba(31, 33, 39, 0.94);
+    --kk-sidebar: rgba(27, 29, 35, 0.92);
+    --kk-group: rgba(37, 39, 46, 0.84);
+    --kk-group-strong: rgba(42, 44, 51, 0.96);
+    --kk-separator: rgba(255, 255, 255, 0.14);
+    --kk-separator-soft: rgba(255, 255, 255, 0.08);
+    --kk-text: #f5f5f7;
+    --kk-text-secondary: #d3d5dc;
+    --kk-text-tertiary: #99a0ab;
+    --kk-accent-soft: rgba(10, 132, 255, 0.22);
+    --kk-selection: rgba(10, 132, 255, 0.2);
+    --kk-hover: rgba(255, 255, 255, 0.045);
+    --kk-shadow: 0 0.5px 0 rgba(255, 255, 255, 0.04), 0 16px 40px rgba(0, 0, 0, 0.28);
+  }
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--kk-font);
+  color: var(--kk-text);
+  text-rendering: optimizeLegibility;
+  font-synthesis: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: var(--kk-window);
+  cursor: default;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+body.overlay-body,
+html.overlay-root,
+html.overlay-root body,
+html.overlay-root #root {
+  background: transparent !important;
+}
+
+html.overlay-root,
+html.overlay-root body,
+html.overlay-root #root {
+  overflow: hidden !important;
+}
+
+@layer components {
+  .mac-app-shell {
+    @apply h-screen w-screen overflow-hidden;
+    background: var(--kk-window);
+  }
+
+  .mac-window {
+    @apply h-full w-full overflow-hidden;
+    background: var(--kk-window);
+  }
+
+  .mac-root {
+    @apply flex h-full flex-col overflow-hidden;
+    background: var(--kk-window);
+  }
+
+  .mac-toolbar {
+    @apply flex items-center justify-between gap-4;
+    min-height: 60px;
+    padding: 12px 18px 10px 102px;
+    border-bottom: 1px solid var(--kk-separator-soft);
+    background: color-mix(in oklab, var(--kk-window) 82%, var(--kk-group-strong) 18%);
+    backdrop-filter: saturate(1.8) blur(20px);
+  }
+
+  .mac-toolbar-drag {
+    @apply flex min-w-0 flex-1 items-center self-stretch;
+  }
+
+  .mac-toolbar-spacer {
+    @apply min-w-[40px] flex-1;
+  }
+
+  .mac-toolbar-actions {
+    @apply flex items-center gap-1.5;
+    min-height: 30px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .mac-toolbar-title {
+    @apply truncate text-[13px] font-semibold leading-[1.2] tracking-[-0.01em];
+    color: var(--kk-text);
+  }
+
+  .mac-toolbar-subtitle {
+    @apply truncate pt-0.5 text-[11px] leading-[1.2];
+    color: var(--kk-text-tertiary);
+  }
+
+  .mac-toolbar-status {
+    @apply flex items-center gap-2;
+  }
+
+  .mac-toolbar-summary {
+    @apply flex items-center gap-1.5 text-[12px];
+    min-height: 28px;
+    color: var(--kk-text-secondary);
+  }
+
+  .mac-toolbar-state {
+    @apply inline-flex items-center gap-1.5 font-medium;
+    color: var(--kk-text-secondary);
+  }
+
+  .mac-toolbar-state-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: rgba(120, 126, 141, 0.72);
+  }
+
+  .mac-toolbar-state.is-listening .mac-toolbar-state-dot {
+    background: #dd645c;
+  }
+
+  .mac-toolbar-state.is-processing .mac-toolbar-state-dot {
+    background: #6f66eb;
+  }
+
+  .mac-toolbar-state.is-done .mac-toolbar-state-dot {
+    background: #3da55f;
+  }
+
+  .mac-toolbar-state.is-error .mac-toolbar-state-dot {
+    background: #d35c54;
+  }
+
+  .mac-toolbar-divider {
+    width: 1px;
+    height: 12px;
+    background: var(--kk-separator-soft);
+  }
+
+  .mac-toolbar-meta {
+    @apply text-[12px];
+    color: var(--kk-text-secondary);
+  }
+
+  .mac-main-layout {
+    @apply flex min-h-0 flex-1;
+  }
+
+  .mac-setup-root {
+    @apply flex h-full flex-col overflow-hidden;
+    background: color-mix(in oklab, var(--kk-window) 90%, var(--kk-group-strong) 10%);
+  }
+
+  .mac-setup-toolbar {
+    @apply flex items-center justify-between;
+    min-height: 60px;
+    padding: 14px 18px 0 102px;
+  }
+
+  .mac-setup-shell {
+    @apply flex min-h-0 flex-1 items-center justify-center px-6 pb-6 pt-4;
+  }
+
+  .mac-setup-card {
+    @apply flex w-full max-w-[900px] flex-col overflow-hidden rounded-[20px] px-7 py-6;
+    border: 1px solid var(--kk-separator-soft);
+    background: color-mix(in oklab, var(--kk-group-strong) 88%, transparent 12%);
+    box-shadow: var(--kk-shadow);
+    min-height: 710px;
+  }
+
+  .mac-setup-header {
+    @apply max-w-[620px];
+  }
+
+  .mac-setup-step {
+    @apply flex min-h-0 flex-1 flex-col overflow-hidden rounded-[14px] px-6 py-5;
+    border: 1px solid var(--kk-separator-soft);
+    background: color-mix(in oklab, var(--kk-group) 92%, transparent 8%);
+  }
+
+  .mac-setup-step-head {
+    @apply mb-4 flex items-start justify-between gap-4;
+  }
+
+  .mac-setup-step-index {
+    @apply mb-1 text-[11px] font-semibold uppercase tracking-[0.06em];
+    color: var(--kk-text-tertiary);
+  }
+
+  .mac-setup-row {
+    @apply flex items-start justify-between gap-4 py-3;
+    border-top: 1px solid var(--kk-separator-soft);
+  }
+
+  .mac-setup-row:first-of-type {
+    border-top: 0;
+    padding-top: 0;
+  }
+
+  .mac-setup-row--stacked {
+    @apply mt-3 items-center;
+    border-top: 1px solid var(--kk-separator-soft);
+  }
+
+  .mac-setup-actions {
+    @apply flex shrink-0 flex-wrap items-center justify-end gap-2;
+  }
+
+  .mac-setup-stepper {
+    @apply mt-5 grid gap-2;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .mac-setup-stepper-item {
+    @apply flex items-start gap-3 rounded-[12px] px-4 py-2.5 text-left transition;
+    border: 1px solid var(--kk-separator-soft);
+    background: color-mix(in oklab, var(--kk-group) 90%, transparent 10%);
+    color: var(--kk-text-secondary);
+  }
+
+  .mac-setup-stepper-item.is-active {
+    border-color: color-mix(in oklab, var(--kk-accent) 22%, var(--kk-separator-soft) 78%);
+    background: color-mix(in oklab, var(--kk-selection) 72%, var(--kk-group-strong) 28%);
+    color: var(--kk-text);
+  }
+
+  .mac-setup-stepper-item.is-complete {
+    background: color-mix(in oklab, var(--kk-success-bg) 82%, var(--kk-group) 18%);
+  }
+
+  .mac-setup-stepper-count {
+    @apply flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[12px] font-semibold;
+    background: color-mix(in oklab, var(--kk-group-strong) 85%, transparent 15%);
+    color: var(--kk-text-secondary);
+  }
+
+  .mac-setup-stepper-item.is-active .mac-setup-stepper-count,
+  .mac-setup-stepper-item.is-complete .mac-setup-stepper-count {
+    background: color-mix(in oklab, var(--kk-accent) 18%, var(--kk-group-strong) 82%);
+    color: var(--kk-text);
+  }
+
+  .mac-setup-stepper-copy {
+    @apply flex min-w-0 flex-1 flex-col;
+  }
+
+  .mac-setup-stepper-title {
+    @apply text-[13px] font-semibold;
+    color: var(--kk-text);
+  }
+
+  .mac-setup-stepper-note {
+    @apply mt-0.5 text-[10px] leading-[1.15rem];
+    color: var(--kk-text-tertiary);
+  }
+
+  .mac-setup-stage {
+    @apply mt-4 flex min-h-0 flex-1 overflow-hidden;
+  }
+
+  .mac-setup-progress {
+    @apply mt-2 space-y-2;
+  }
+
+  .mac-setup-model-list {
+    @apply grid gap-1.5;
+  }
+
+  .mac-setup-model-row {
+    @apply flex w-full items-center gap-4 rounded-[12px] px-4 py-2.5 text-left transition;
+    border: 1px solid var(--kk-separator-soft);
+    background: color-mix(in oklab, var(--kk-group-strong) 84%, transparent 16%);
+  }
+
+  .mac-setup-model-row:hover,
+  .mac-setup-phrase:hover {
+    background: color-mix(in oklab, var(--kk-hover) 82%, var(--kk-group-strong) 18%);
+  }
+
+  .mac-setup-model-row.is-selected,
+  .mac-setup-phrase.is-selected {
+    border-color: color-mix(in oklab, var(--kk-accent) 22%, var(--kk-separator-soft) 78%);
+    background: color-mix(in oklab, var(--kk-selection) 70%, var(--kk-group-strong) 30%);
+  }
+
+  .mac-setup-phrase-list {
+    @apply mt-1 grid gap-1.5;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .mac-setup-phrase {
+    @apply rounded-[10px] px-3 py-2.5 text-[12px] leading-5 transition;
+    border: 1px solid var(--kk-separator-soft);
+    background: color-mix(in oklab, var(--kk-group-strong) 84%, transparent 16%);
+    color: var(--kk-text-secondary);
+  }
+
+  .mac-setup-practice-card {
+    @apply mt-3 rounded-[12px] px-4 py-3.5;
+    border: 1px solid var(--kk-separator-soft);
+    background: color-mix(in oklab, var(--kk-group-strong) 88%, transparent 12%);
+  }
+
+  .mac-setup-practice-label {
+    @apply text-[11px] font-semibold uppercase tracking-[0.06em];
+    color: var(--kk-text-tertiary);
+  }
+
+  .mac-setup-practice-text {
+    @apply mt-2 text-[17px] font-medium leading-7;
+    color: var(--kk-text);
+  }
+
+  .mac-setup-practice-score {
+    @apply mt-4 flex items-center justify-between gap-3;
+  }
+
+  .mac-setup-practice-heard {
+    @apply mt-2 text-[14px] leading-6;
+    color: var(--kk-text-secondary);
+  }
+
+  .mac-setup-footer {
+    @apply mt-5 flex items-center justify-between gap-4;
+  }
+
+  .mac-sidebar {
+    @apply min-h-0 w-[220px] shrink-0 overflow-y-auto px-3 pb-4 pt-3;
+    border-right: 1px solid var(--kk-separator-soft);
+    background: color-mix(in oklab, var(--kk-sidebar) 90%, var(--kk-window) 10%);
+  }
+
+  .mac-sidebar-title {
+    @apply px-2 py-1 text-[11px] font-semibold uppercase tracking-[0.08em];
+    color: var(--kk-text-tertiary);
+  }
+
+  .mac-sidebar-item {
+    @apply mt-0.5 flex min-h-[28px] w-full items-center rounded-[8px] px-2.5 text-left text-[13px] font-medium transition;
+    color: var(--kk-text-secondary);
+  }
+
+  .mac-sidebar-item:hover {
+    background: var(--kk-hover);
+  }
+
+  .mac-sidebar-item.is-selected {
+    background: var(--kk-selection);
+    color: var(--kk-text);
+  }
+
+  .mac-content-panel {
+    @apply min-h-0 min-w-0 flex-1 overflow-hidden;
+    background: color-mix(in oklab, var(--kk-content) 94%, var(--kk-window) 6%);
+  }
+
+  .mac-content-scroll {
+    @apply h-full overflow-y-auto;
+    padding: 22px 24px 30px;
+  }
+
+  .mac-content-scroll--tight {
+    @apply p-0;
+  }
+
+  .mac-section-card {
+    @apply rounded-[14px] px-5 py-5;
+    border: 1px solid var(--kk-separator-soft);
+    background: color-mix(in oklab, var(--kk-group-strong) 86%, transparent 14%);
+    box-shadow: var(--kk-shadow);
+  }
+
+  .mac-dictation-layout {
+    @apply flex items-center gap-5;
+  }
+
+  .mac-dictation-orb-wrap {
+    @apply shrink-0;
+  }
+
+  .mac-kicker {
+    @apply text-[11px] font-semibold uppercase tracking-[0.08em];
+    color: var(--kk-text-tertiary);
+  }
+
+  .mac-page-title {
+    @apply mt-1 text-[24px] font-semibold tracking-[-0.03em];
+    color: var(--kk-text);
+  }
+
+  .mac-page-title--flush {
+    @apply mt-0;
+  }
+
+  .mac-page-title--compact {
+    @apply text-[18px] tracking-[-0.02em];
+  }
+
+  .mac-page-subtitle {
+    @apply mt-1 text-[13px] leading-6;
+    color: var(--kk-text-secondary);
+  }
+
+  .mac-inline-meta {
+    @apply mt-3 flex flex-wrap items-center gap-3 text-[12px];
+    color: var(--kk-text-secondary);
+  }
+
+  .mac-inline-meta > span:not(.mac-badge) {
+    position: relative;
+    padding-left: 10px;
+  }
+
+  .mac-inline-meta > span:not(.mac-badge)::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 4px;
+    height: 4px;
+    border-radius: 999px;
+    transform: translateY(-50%);
+    background: var(--kk-text-tertiary);
+    opacity: 0.8;
+  }
+
+  .mac-group {
+    @apply mt-5 overflow-hidden rounded-[12px];
+    border: 1px solid var(--kk-separator-soft);
+    background: color-mix(in oklab, var(--kk-group) 92%, transparent 8%);
+  }
+
+  .mac-group--inset {
+    background: color-mix(in oklab, var(--kk-group-strong) 84%, transparent 16%);
+  }
+
+  .mac-group-header {
+    @apply flex items-start justify-between gap-4 px-4 py-3;
+    border-bottom: 1px solid var(--kk-separator-soft);
+  }
+
+  .mac-group-title {
+    @apply text-[13px] font-semibold tracking-[-0.01em];
+    color: var(--kk-text);
+  }
+
+  .mac-group-subtitle {
+    @apply mt-0.5 text-[12px];
+    color: var(--kk-text-tertiary);
+  }
+
+  .mac-group-note {
+    @apply text-[12px];
+    color: var(--kk-text-secondary);
+  }
+
+  .mac-impact-grid {
+    @apply mt-5 grid gap-4;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .mac-impact-card {
+    @apply rounded-[12px] px-4 py-4;
+    min-height: 104px;
+    border: 1px solid var(--kk-separator-soft);
+    background: color-mix(in oklab, var(--kk-group-strong) 74%, transparent 26%);
+  }
+
+  .mac-impact-kicker {
+    @apply text-[11px] font-semibold uppercase tracking-[0.06em];
+    color: var(--kk-text-tertiary);
+  }
+
+  .mac-impact-value {
+    @apply mt-2 text-[24px] font-semibold tracking-[-0.03em] leading-none;
+    color: var(--kk-text);
+  }
+
+  .mac-impact-note {
+    @apply mt-2 text-[11px] leading-4;
+    color: var(--kk-text-secondary);
+  }
+
+  .mac-badge {
+    @apply inline-flex items-center rounded-full px-2 py-1 text-[11px] font-medium;
+    border: 1px solid var(--kk-separator-soft);
+    background: color-mix(in oklab, var(--kk-group-strong) 66%, transparent 34%);
+    color: var(--kk-text-secondary);
+  }
+
+  .mac-badge--neutral {
+    color: var(--kk-text-secondary);
+  }
+
+  .mac-badge--recording {
+    color: #b23831;
+    background: color-mix(in oklab, #ffd9d4 42%, var(--kk-group-strong) 58%);
+  }
+
+  .mac-badge--processing {
+    color: #5d5ae1;
+    background: color-mix(in oklab, #e3e0ff 42%, var(--kk-group-strong) 58%);
+  }
+
+  .mac-badge--success {
+    color: #287f49;
+    background: color-mix(in oklab, #ddf4e5 44%, var(--kk-group-strong) 56%);
+  }
+
+  .mac-badge--error {
+    color: #ba3b32;
+    background: color-mix(in oklab, #ffd8d4 46%, var(--kk-group-strong) 54%);
+  }
+
+  .mac-chip {
+    @apply inline-flex items-center rounded-full px-2 py-1 text-[11px] font-medium;
+    border: 1px solid var(--kk-separator-soft);
+    background: color-mix(in oklab, var(--kk-group-strong) 66%, transparent 34%);
+    color: var(--kk-text-secondary);
+  }
+
+  .mac-chip--ready {
+    color: var(--kk-text-secondary);
+  }
+
+  .mac-chip--processing {
+    color: #5d5ae1;
+    background: color-mix(in oklab, #e3e0ff 42%, var(--kk-group-strong) 58%);
+  }
+
+  .mac-chip--success {
+    color: #287f49;
+    background: color-mix(in oklab, #ddf4e5 44%, var(--kk-group-strong) 56%);
+  }
+
+  .mac-btn {
+    @apply inline-flex h-8 items-center justify-center gap-1.5 rounded-[8px] px-3 text-[12px] font-medium transition;
+    border: 1px solid var(--kk-separator);
+    background: color-mix(in oklab, var(--kk-group-strong) 78%, transparent 22%);
+    color: var(--kk-text);
+  }
+
+  .mac-btn:hover {
+    background: color-mix(in oklab, var(--kk-group-strong) 92%, transparent 8%);
+  }
+
+  .mac-btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  .mac-btn-primary {
+    border-color: transparent;
+    color: #fff;
+    background: linear-gradient(180deg, color-mix(in oklab, var(--kk-accent) 88%, white 12%), var(--kk-accent));
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.2) inset;
+  }
+
+  .mac-btn-primary:hover {
+    color: #fff;
+    background: linear-gradient(
+      180deg,
+      color-mix(in oklab, var(--kk-accent) 92%, white 8%),
+      color-mix(in oklab, var(--kk-accent) 96%, black 4%)
+    );
+    filter: brightness(1.02);
+  }
+
+  .mac-btn-destructive {
+    color: var(--kk-danger);
+  }
+
+  .mac-input,
+  .mac-select {
+    @apply h-8 rounded-[8px] px-2.5 text-[12px] outline-none;
+    min-width: 120px;
+    border: 1px solid var(--kk-separator);
+    background: color-mix(in oklab, var(--kk-group-strong) 92%, transparent 8%);
+    color: var(--kk-text);
+  }
+
+  .mac-input:focus,
+  .mac-select:focus {
+    border-color: color-mix(in oklab, var(--kk-accent) 65%, #ffffff 35%);
+    box-shadow: 0 0 0 3px var(--kk-accent-soft);
+  }
+
+  .mac-input {
+    cursor: text;
+    user-select: text;
+    -webkit-user-select: text;
+  }
+
+  .mac-select {
+    @apply pr-8;
+    cursor: default;
+  }
+
+  .mac-switch {
+    @apply relative inline-flex h-5 w-9 items-center rounded-full transition;
+    background: rgba(120, 126, 141, 0.35);
+  }
+
+  .mac-switch.is-on {
+    background: var(--kk-accent);
+  }
+
+  .mac-switch-thumb {
+    @apply inline-block h-4 w-4 translate-x-0.5 rounded-full transition;
+    background: #fff;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.22);
+  }
+
+  .mac-switch.is-on .mac-switch-thumb {
+    @apply translate-x-4;
+  }
+
+  .mac-segmented {
+    @apply inline-flex h-8 items-center rounded-[9px] p-0.5;
+    border: 1px solid var(--kk-separator-soft);
+    background: color-mix(in oklab, var(--kk-group-strong) 74%, transparent 26%);
+  }
+
+  .mac-segmented-btn {
+    @apply h-full rounded-[7px] px-3 text-[12px] font-medium;
+    color: var(--kk-text-secondary);
+  }
+
+  .mac-segmented-btn.is-active {
+    background: color-mix(in oklab, var(--kk-group-strong) 96%, transparent 4%);
+    color: var(--kk-text);
+    border: 1px solid var(--kk-separator-soft);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+  }
+
+  .mac-setting-row {
+    @apply flex min-h-[46px] items-center justify-between gap-4 px-4 py-2.5 last:border-b-0;
+    border-bottom: 1px solid var(--kk-separator-soft);
+  }
+
+  .mac-setting-label {
+    @apply text-[13px] font-medium;
+    color: var(--kk-text);
+  }
+
+  .mac-setting-description {
+    @apply mt-0.5 text-[11px];
+    color: var(--kk-text-tertiary);
+  }
+
+  .mac-value-text {
+    @apply text-[12px] font-medium;
+    color: var(--kk-text-secondary);
+  }
+
+  .mac-list-row {
+    @apply p-4;
+    border-top: 1px solid var(--kk-separator-soft);
+    background: transparent;
+  }
+
+  .mac-list-row:first-child {
+    border-top: 0;
+  }
+
+  .mac-empty-state,
+  .mac-loading-state {
+    @apply flex h-full min-h-[260px] flex-col items-center justify-center px-8 text-center;
+  }
+
+  .mac-loading-state {
+    @apply text-[13px];
+    color: var(--kk-text-secondary);
+  }
+
+  .mac-loading-state--error {
+    color: var(--kk-danger);
+  }
+
+  .mac-detail-layout {
+    @apply flex h-full min-h-0;
+  }
+
+  .mac-record-list {
+    @apply min-h-0 w-[320px] shrink-0 overflow-y-auto;
+    border-right: 1px solid var(--kk-separator-soft);
+    background: color-mix(in oklab, var(--kk-sidebar) 74%, var(--kk-window) 26%);
+  }
+
+  .mac-record-row {
+    @apply block w-full px-4 py-3 text-left transition;
+    border-bottom: 1px solid var(--kk-separator-soft);
+    background: transparent;
+    outline: none;
+  }
+
+  .mac-record-row:hover {
+    background: var(--kk-hover);
+  }
+
+  .mac-record-row.is-selected {
+    background: var(--kk-selection);
+  }
+
+  .mac-record-row:focus-visible {
+    background: color-mix(in oklab, var(--kk-selection) 82%, transparent 18%);
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--kk-accent) 38%, transparent 62%);
+  }
+
+  .mac-record-row-head {
+    @apply flex items-center justify-between gap-3;
+  }
+
+  .mac-record-title {
+    @apply truncate text-[13px] font-medium;
+    color: var(--kk-text);
+  }
+
+  .mac-record-time {
+    @apply shrink-0 text-[11px];
+    color: var(--kk-text-tertiary);
+  }
+
+  .mac-record-snippet {
+    @apply mt-1 line-clamp-2 text-[12px] leading-5;
+    color: var(--kk-text-secondary);
+  }
+
+  .mac-record-meta {
+    @apply mt-2 flex flex-wrap items-center gap-3 text-[11px];
+    color: var(--kk-text-tertiary);
+  }
+
+  .mac-record-detail {
+    @apply min-h-0 min-w-0 flex-1 overflow-y-auto px-6 py-5;
+  }
+
+  .mac-record-detail-head {
+    @apply mb-5 flex items-start justify-between gap-4;
+  }
+
+  .mac-record-body {
+    @apply rounded-[12px] px-4 py-4 text-[14px] leading-7;
+    border: 1px solid var(--kk-separator-soft);
+    background: color-mix(in oklab, var(--kk-group-strong) 84%, transparent 16%);
+    color: var(--kk-text);
+    white-space: pre-wrap;
+  }
+
+  .mac-progress-track {
+    @apply h-1.5 overflow-hidden rounded-full;
+    background: color-mix(in oklab, var(--kk-separator) 60%, transparent 40%);
+  }
+
+  .mac-progress-fill {
+    @apply h-full rounded-full;
+    background: linear-gradient(90deg, color-mix(in oklab, var(--kk-processing) 82%, #8ca5ff 18%), var(--kk-processing));
+  }
+
+  .mac-log-console {
+    @apply max-h-[460px] overflow-y-auto;
+    background: transparent;
+  }
+
+  .mac-log-row {
+    @apply px-3 py-2.5;
+    border-top: 1px solid var(--kk-separator-soft);
+  }
+
+  .mac-log-row:first-child {
+    border-top: 0;
+  }
+
+  .mac-log-empty {
+    @apply px-4 py-12 text-center text-[12px];
+    color: var(--kk-text-tertiary);
+  }
+
+  .mac-log-badge {
+    @apply inline-flex rounded-[6px] px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.05em];
+    color: var(--kk-text-secondary);
+    background: color-mix(in oklab, var(--kk-separator) 55%, transparent 45%);
+  }
+
+  .mac-log-badge--info {
+    color: #0b63d1;
+    background: rgba(10, 132, 255, 0.12);
+  }
+
+  .mac-log-badge--warn {
+    color: #b36a00;
+    background: rgba(255, 159, 10, 0.14);
+  }
+
+  .mac-log-badge--error {
+    color: var(--kk-danger);
+    background: rgba(255, 69, 58, 0.14);
+  }
+
+  .mac-brand-pill {
+    @apply flex items-center gap-2 rounded-[10px] px-2 py-1.5;
+    background: color-mix(in oklab, var(--kk-group-strong) 70%, transparent 30%);
+    border: 1px solid var(--kk-separator-soft);
+  }
+
+  .mac-brand-icon {
+    @apply h-4 w-4 rounded-[4px];
+  }
+
+  .mac-footer-strip {
+    @apply px-4 pb-4 pt-2;
+    border-top: 1px solid var(--kk-separator-soft);
+    background: color-mix(in oklab, var(--kk-window) 88%, var(--kk-group-strong) 12%);
+  }
+
+  .mac-footer-pill {
+    @apply inline-flex items-center rounded-full px-3 py-1 text-[11px] font-medium;
+    gap: 0.45rem;
+    border: 1px solid var(--kk-separator-soft);
+    color: var(--kk-text-secondary);
+    background: color-mix(in oklab, var(--kk-group-strong) 60%, transparent 40%);
+  }
+
+  .mac-footer-divider {
+    color: var(--kk-text-tertiary);
+  }
+
+  .mac-footer-link {
+    color: var(--kk-text-secondary);
+    text-decoration: none;
+  }
+
+  .mac-footer-link:hover {
+    color: var(--kk-text);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .mac-mic-orb {
+    @apply relative inline-flex h-[68px] w-[68px] items-center justify-center rounded-full text-white transition;
+    box-shadow: 0 8px 18px rgba(44, 79, 153, 0.22);
+  }
+
+  .mac-mic-orb::after {
+    content: "";
+    position: absolute;
+    inset: -5px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.34);
+    opacity: 0;
+    transition: opacity 0.18s ease;
+  }
+
+  .mac-mic-orb:hover::after {
+    opacity: 1;
+  }
+
+  .mac-mic-orb.ready {
+    background: linear-gradient(180deg, #66a8ff, #4279f9);
+  }
+
+  .mac-mic-orb.listening {
+    background: linear-gradient(180deg, #ff746d, #ef4f4a);
+    box-shadow: 0 8px 18px rgba(196, 66, 58, 0.28);
+  }
+
+  .mac-mic-orb.processing {
+    background: linear-gradient(180deg, #8a84ff, #6961ec);
+  }
+
+  .mac-mic-orb.done {
+    background: linear-gradient(180deg, #5bc177, #3ca95f);
+    box-shadow: 0 8px 18px rgba(57, 137, 89, 0.22);
+  }
+
+  .mac-mic-orb.error {
+    background: linear-gradient(180deg, #ef7f79, #d45850);
+    box-shadow: 0 8px 18px rgba(168, 73, 68, 0.24);
+  }
+
+  .mac-mic-icon {
+    @apply relative text-[20px] font-semibold leading-none;
+  }
+
+  .mac-wave-line {
+    @apply h-[52px] w-full px-1 py-1;
+    background: transparent;
+  }
+
+  .overlay-shell {
+    @apply h-full w-full p-0;
+    background: transparent;
+  }
+
+  .overlay-card {
+    @apply flex h-full w-full items-center gap-2 overflow-hidden rounded-[13px] px-2.5 py-1.5;
+    border: 1px solid rgba(116, 123, 138, 0.34);
+    outline: 1px solid rgba(255, 255, 255, 0.24);
+    outline-offset: -1px;
+    background: color-mix(in oklab, var(--kk-group-strong) 74%, transparent 26%);
+    box-shadow: 0 8px 22px rgba(15, 23, 42, 0.12);
+    backdrop-filter: saturate(1.35) blur(18px);
+  }
+
+  .overlay-icon {
+    @apply inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold text-white;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  }
+
+  .overlay-stop-button {
+    border: 0;
+    outline: none;
+    cursor: pointer;
+  }
+
+  .overlay-stop-button:hover {
+    filter: brightness(1.03);
+  }
+
+  .overlay-stop-button:active {
+    transform: scale(0.98);
+  }
+
+  .overlay-icon.ready {
+    background: linear-gradient(180deg, #6da4ff, #4b7cf5);
+  }
+
+  .overlay-icon.listening {
+    background: linear-gradient(180deg, #ff7e74, #ef5a55);
+  }
+
+  .overlay-icon.processing {
+    background: linear-gradient(180deg, #8d87ff, #6d63eb);
+  }
+
+  .overlay-icon.done {
+    background: linear-gradient(180deg, #5fc27a, #43ad62);
+  }
+
+  .overlay-icon.error {
+    background: linear-gradient(180deg, #ef857c, #d25b54);
+  }
+
+  .overlay-label {
+    @apply truncate text-[12px] font-medium;
+    color: var(--kk-text);
+  }
+
+  .overlay-wave-wrap {
+    @apply min-w-0 flex-1 rounded-full px-1.5 py-1;
+    border: 1px solid rgba(116, 123, 138, 0.16);
+    background: color-mix(in oklab, var(--kk-group-strong) 58%, transparent 42%);
+  }
+
+  .overlay-wave-svg {
+    @apply h-[10px] w-full;
+  }
+
+  .about-window {
+    @apply flex h-full w-full items-center justify-center p-4;
+    background: color-mix(in oklab, var(--kk-window) 94%, var(--kk-group-strong) 6%);
+  }
+
+  .about-card {
+    @apply flex h-full w-full max-w-[460px] flex-col rounded-[16px] px-6 pb-4 pt-5;
+    background: color-mix(in oklab, var(--kk-group-strong) 92%, transparent 8%);
+    border: 1px solid var(--kk-separator-soft);
+    box-shadow: 0 0.5px 0 rgba(255, 255, 255, 0.34), 0 14px 30px rgba(15, 23, 42, 0.08);
+  }
+
+  .about-icon {
+    @apply h-[72px] w-[72px] rounded-[16px];
+  }
+
+  .about-header {
+    @apply flex flex-col items-center text-center;
+  }
+
+  .about-title {
+    @apply mt-2 text-[21px] font-semibold tracking-[-0.03em];
+    color: var(--kk-text);
+  }
+
+  .about-version {
+    @apply mt-1 text-[12px];
+    color: var(--kk-text-tertiary);
+  }
+
+  .about-description {
+    @apply mt-2 text-[13px] leading-5;
+    color: var(--kk-text-secondary);
+  }
+
+  .about-meta {
+    @apply mt-1 text-[11px] leading-5;
+    color: var(--kk-text-tertiary);
+  }
+
+  .about-segmented {
+    @apply mt-4 inline-flex self-center rounded-[9px] p-0.5;
+    border: 1px solid var(--kk-separator-soft);
+    background: color-mix(in oklab, var(--kk-group-strong) 72%, transparent 28%);
+  }
+
+  .about-segmented-btn {
+    @apply min-w-[92px] rounded-[7px] px-3 py-1.5 text-[12px] font-medium;
+    color: var(--kk-text-secondary);
+  }
+
+  .about-segmented-btn.is-active {
+    border: 1px solid var(--kk-separator-soft);
+    background: color-mix(in oklab, var(--kk-group-strong) 96%, transparent 4%);
+    color: var(--kk-text);
+  }
+
+  .about-panel {
+    @apply mt-3 min-h-0 flex-1 overflow-y-auto rounded-[12px] px-4 py-3;
+    border: 1px solid var(--kk-separator-soft);
+    background: color-mix(in oklab, var(--kk-group) 84%, transparent 16%);
+  }
+
+  .about-panel-title {
+    @apply text-[12px] font-semibold uppercase tracking-[0.06em];
+    color: var(--kk-text-tertiary);
+  }
+
+  .about-panel-copy {
+    @apply mt-2 text-[13px] leading-6;
+    color: var(--kk-text-secondary);
+  }
+
+  .about-panel-list {
+    @apply mt-2 space-y-3;
+  }
+
+  .about-panel-row {
+    @apply flex items-start justify-between gap-3;
+  }
+
+  .about-panel-name {
+    @apply text-[13px] font-medium;
+    color: var(--kk-text);
+  }
+
+  .about-panel-note {
+    @apply mt-0.5 text-[12px] leading-[1.35rem];
+    color: var(--kk-text-secondary);
+  }
+
+  .about-panel-meta {
+    @apply shrink-0 text-right text-[11px];
+    color: var(--kk-text-tertiary);
+  }
+
+  .about-actions {
+    @apply mt-3.5 flex items-center;
+  }
+
+  .about-footnote {
+    @apply text-[11px];
+    color: var(--kk-text-tertiary);
+  }
+}
+
+@layer utilities {
+  .mac-selectable,
+  .mac-selectable * {
+    user-select: text;
+    -webkit-user-select: text;
+  }
+
+  .mac-selectable--text {
+    cursor: text;
+  }
+
+  button,
+  [role="button"],
+  [role="switch"],
+  [role="tab"],
+  a,
+  summary,
+  .mac-btn,
+  .mac-sidebar-item,
+  .mac-switch,
+  .mac-segmented-btn,
+  .mac-mic-orb,
+  .mac-record-row {
+    cursor: pointer;
+  }
+}
