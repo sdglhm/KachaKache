@@ -287,6 +287,14 @@ The workflow:
 - uploads two artifacts:
   - `KachaKache-app-macos`
   - `KachaKache-dmg-macos`
+- for tagged releases, it also uploads stable release assets:
+  - `KachaKache.dmg`
+  - `KachaKache.app.zip`
+
+Permanent website-friendly download URLs:
+
+- latest DMG: [https://github.com/sdglhm/KachaKache/releases/latest/download/KachaKache.dmg](https://github.com/sdglhm/KachaKache/releases/latest/download/KachaKache.dmg)
+- latest app zip: [https://github.com/sdglhm/KachaKache/releases/latest/download/KachaKache.app.zip](https://github.com/sdglhm/KachaKache/releases/latest/download/KachaKache.app.zip)
 
 ## Runtime Verification
 
