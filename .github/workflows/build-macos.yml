@@ -1,0 +1,59 @@
+name: Build macOS App
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+jobs:
+  build-macos:
+    runs-on: macos-14
+    timeout-minutes: 45
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Rust build artifacts
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: |
+            src-tauri -> target
+
+      - name: Install macOS build dependencies
+        run: |
+          brew update
+          brew install whisper-cpp
+
+      - name: Install frontend dependencies
+        run: npm ci
+
+      - name: Build Tauri app bundle
+        run: npm run tauri build
+
+      - name: Upload macOS app bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: KachaKache-app-macos
+          path: src-tauri/target/release/bundle/macos/KachaKache.app
+          if-no-files-found: error
+
+      - name: Upload macOS DMG
+        uses: actions/upload-artifact@v4
+        with:
+          name: KachaKache-dmg-macos
+          path: src-tauri/target/release/bundle/dmg/*.dmg
+          if-no-files-found: error

@@ -363,7 +363,25 @@ Likely next improvements:
 - expanded model catalog and verification
 - richer real-time transcription UI if needed
 
-## License / Credits
+## License
+
+This project is licensed under the GNU General Public License v3.0.
+
+- full license text: [LICENSE](/Users/admin/Dev/KachaKache/LICENSE)
+- SPDX identifier: `GPL-3.0-only`
+
+In short:
+
+- you can use, study, modify, and redistribute the code
+- if you distribute a modified version, you must also provide the corresponding source code under GPLv3
+
+## Name and Branding
+
+The GPLv3 applies to the source code in this repository.
+
+The `KachaKache` name, logo, and brand assets are not automatically granted as trademark rights by the software license. If this project later formalizes trademark usage rules, they should be documented separately.
+
+## Credits
 
 KachaKache uses open local speech tooling and bundles a local `whisper.cpp` runtime for macOS builds.
 
